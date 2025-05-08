@@ -4,61 +4,47 @@ namespace App\Http\Controllers;
 
 use App\Models\SavedArticle;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class SavedArticleController extends Controller
 {
-    // Tampilkan semua artikel yang disimpan oleh user yang sedang login
-    public function index()
+    public function index(Request $request)
     {
-        $articles = Auth::user()->savedArticles()->latest()->get();
-        return response()->json($articles);
+        // Mendapatkan artikel yang disimpan oleh user yang sedang login
+        $savedArticles = $request->user()->savedArticles; 
+        return response()->json($savedArticles);
     }
 
-    // Simpan artikel baru
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        // Validasi input artikel
+        $request->validate([
             'title' => 'required|string',
             'url' => 'required|url',
+            'description' => 'nullable|string',
             'urlToImage' => 'nullable|url',
-            'source' => 'required|string',
-            'published_at' => 'required|date',
         ]);
 
-        $article = Auth::user()->savedArticles()->create($validated);
+        // Menyimpan artikel baru yang disimpan oleh user
+        $savedArticle = $request->user()->savedArticles()->create([
+            'title' => $request->title,
+            'url' => $request->url,
+            'description' => $request->description,
+            'urlToImage' => $request->urlToImage,
+        ]);
 
-        return response()->json($article, 201);
+        return response()->json($savedArticle, 201);  // Response dengan artikel yang baru disimpan
     }
 
-    // Tampilkan satu artikel
-    public function show(SavedArticle $savedArticle)
+    public function destroy(Request $request, $id)
     {
-        $this->authorizeUser($savedArticle);
+        // Menghapus artikel berdasarkan ID dari daftar yang disimpan oleh user
+        $savedArticle = $request->user()->savedArticles()->find($id);
 
-        return response()->json($savedArticle);
-    }
-
-    // Hapus artikel
-    public function destroy(SavedArticle $savedArticle)
-    {
-        $this->authorizeUser($savedArticle);
+        if (!$savedArticle) {
+            return response()->json(['message' => 'Artikel tidak ditemukan'], 404);
+        }
 
         $savedArticle->delete();
-
-        return response()->json(['message' => 'Deleted']);
-    }
-
-    // Optional: middleware auth dan pengecekan user
-    protected function authorizeUser(SavedArticle $article)
-    {
-        if ($article->user_id !== Auth::id()) {
-            abort(403, 'Unauthorized action.');
-        }
-    }
-
-    public function discussions()
-    {
-        return $this->hasMany(Discussion::class);
+        return response()->json(['message' => 'Artikel berhasil dihapus']);
     }
 }

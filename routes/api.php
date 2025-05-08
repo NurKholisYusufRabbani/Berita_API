@@ -2,21 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\SavedArticleController;
 
 Route::middleware('auth')->group(function () {
     Route::resource('saved-articles', SavedArticleController::class)->except(['update', 'edit', 'create']);
@@ -24,6 +11,18 @@ Route::middleware('auth')->group(function () {
 
 Route::apiResource('users', UserController::class); // gunakan dengan hati-hati untuk data sensitif!
 
-Route::middleware('auth')->group(function () {
-    Route::resource('discussions', DiscussionController::class)->except(['edit', 'update', 'create']);
+Route::post('register', [AuthController::class, 'register']);
+Route::post('login', [AuthController::class, 'login']);
+
+Route::middleware('auth:api')->get('user', [AuthController::class, 'me']);
+
+Route::middleware('auth:api')->group(function () {
+    // Endpoint untuk melihat artikel yang disimpan
+    Route::get('saved-articles', [SavedArticleController::class, 'index']);
+
+    // Endpoint untuk menyimpan artikel
+    Route::post('saved-articles', [SavedArticleController::class, 'store']);
+
+    // Endpoint untuk menghapus artikel yang disimpan
+    Route::delete('saved-articles/{id}', [SavedArticleController::class, 'destroy']);
 });
