@@ -10,7 +10,7 @@ class NewsController extends Controller
     {
         $response = Http::get('https://newsapi.org/v2/top-headlines', [
             'country' => 'us',
-            'pageSize' => 15,
+            'pageSize' => 24,
             'apiKey' => env('NEWSAPI_KEY')
         ]);
 
