@@ -12,8 +12,13 @@
         @foreach ($articles as $article)
             <div class="col">
                 <div class="card h-100 border-0 shadow-sm">
-                    @if($article['urlToImage'])
-                        <img src="{{ $article['urlToImage'] }}" class="card-img-top rounded-top" alt="Thumbnail">
+                    @if(isset($article['multimedia'][0]['url']) && !empty($article['multimedia'][0]['url']))
+                        @php
+                            $imageUrl = $article['multimedia'][0]['url'];  // Gunakan URL yang sudah lengkap
+                        @endphp
+                        <img src="{{ $imageUrl }}" class="card-img-top rounded-top" alt="Thumbnail" onerror="this.onerror=null;this.src='{{ asset('images/default_image.jpg') }}';">
+                    @else
+                        <img src="{{ asset('images/default_image.jpg') }}" class="card-img-top rounded-top" alt="Default Thumbnail">
                     @endif
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title mb-2" style="font-size: 1rem;">
@@ -22,12 +27,12 @@
                             </a>
                         </h5>
                         <p class="card-text text-muted" style="font-size: 0.9rem;">
-                            {{ Str::limit($article['description'], 100, '...') }}
+                            {{ Str::limit($article['abstract'], 100, '...') }}
                         </p>
                         <div class="mt-auto">
                             <small class="text-secondary">
-                                {{ $article['source']['name'] ?? 'Tidak diketahui' }} ·
-                                {{ \Carbon\Carbon::parse($article['publishedAt'])->diffForHumans() }}
+                                {{ $article['section'] ?? 'Tidak diketahui' }} ·
+                                {{ \Carbon\Carbon::parse($article['published_date'])->diffForHumans() }}
                             </small>
                         </div>
                     </div>

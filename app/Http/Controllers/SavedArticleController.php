@@ -4,47 +4,35 @@ namespace App\Http\Controllers;
 
 use App\Models\SavedArticle;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SavedArticleController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        // Mendapatkan artikel yang disimpan oleh user yang sedang login
-        $savedArticles = $request->user()->savedArticles; 
-        return response()->json($savedArticles);
+        return SavedArticle::where('user_id', Auth::id())->get();
     }
 
     public function store(Request $request)
     {
-        // Validasi input artikel
         $request->validate([
-            'title' => 'required|string',
+            'title' => 'required',
             'url' => 'required|url',
-            'description' => 'nullable|string',
-            'urlToImage' => 'nullable|url',
         ]);
 
-        // Menyimpan artikel baru yang disimpan oleh user
-        $savedArticle = $request->user()->savedArticles()->create([
+        return SavedArticle::create([
+            'user_id' => Auth::id(),
             'title' => $request->title,
             'url' => $request->url,
-            'description' => $request->description,
-            'urlToImage' => $request->urlToImage,
+            'summary' => $request->summary,
+            'section' => $request->section,
         ]);
-
-        return response()->json($savedArticle, 201);  // Response dengan artikel yang baru disimpan
     }
 
-    public function destroy(Request $request, $id)
+    public function destroy($id)
     {
-        // Menghapus artikel berdasarkan ID dari daftar yang disimpan oleh user
-        $savedArticle = $request->user()->savedArticles()->find($id);
-
-        if (!$savedArticle) {
-            return response()->json(['message' => 'Artikel tidak ditemukan'], 404);
-        }
-
-        $savedArticle->delete();
-        return response()->json(['message' => 'Artikel berhasil dihapus']);
+        $article = SavedArticle::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+        $article->delete();
+        return response()->json(['message' => 'Deleted']);
     }
 }

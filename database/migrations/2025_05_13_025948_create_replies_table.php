@@ -6,21 +6,25 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up()
     {
-    Schema::create('saved_articles', function (Blueprint $table) {
+    Schema::create('replies', function (Blueprint $table) {
         $table->id();
+        $table->foreignId('comment_id')->constrained()->onDelete('cascade');
         $table->foreignId('user_id')->constrained()->onDelete('cascade');
-        $table->string('title');
-        $table->string('url');
-        $table->text('summary')->nullable();
-        $table->string('section')->nullable();
+        $table->text('content');
         $table->timestamps();
     });
     }
 
-    public function down()
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
     {
-        Schema::dropIfExists('saved_articles');
+        Schema::dropIfExists('replies');
     }
 };
