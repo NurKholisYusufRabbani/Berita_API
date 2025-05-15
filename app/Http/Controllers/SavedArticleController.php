@@ -20,13 +20,15 @@ class SavedArticleController extends Controller
             'url' => 'required|url',
         ]);
 
-        return SavedArticle::create([
+        SavedArticle::create([
             'user_id' => Auth::id(),
             'title' => $request->title,
             'url' => $request->url,
             'summary' => $request->summary,
             'section' => $request->section,
         ]);
+
+        return redirect()->back()->with('success', 'Artikel berhasil disimpan!');
     }
 
     public function destroy($id)

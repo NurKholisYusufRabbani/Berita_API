@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PageController;
 
 // Auth Form Routes (halaman tampilan)
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register.form');
@@ -10,7 +10,10 @@ Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login.form
 Route::get('/forgot-password', [AuthController::class, 'showForgotPasswordForm'])->name('password.request');
 
 // Page Routes
-Route::get('/', [HomeController::class, 'home'])->name('home');
-Route::get('/home/{category}', [HomeController::class, 'category'])->name('home.category');
-Route::get('/user/{username}', [HomeController::class, 'userProfile'])->name('user.profile');
-Route::get('/discussion', [HomeController::class, 'discussion'])->name('discussion');
+Route::get('/', function () {
+    return redirect()->route('home.index');
+});
+Route::get('/home', [PageController::class, 'index'])->name('home.index');
+Route::get('/home/{category}', [PageController::class, 'category'])->name('home.category');
+Route::get('/user/{username}', [HPageController::class, 'userProfile'])->name('user.profile');
+Route::get('/discussion', [PageController::class, 'discussion'])->name('discussion');

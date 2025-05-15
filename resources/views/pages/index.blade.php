@@ -8,13 +8,19 @@
         <p class="text-muted">Keep up to date with the latest happenings around the world</p>
     </div>
 
+    @if(session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         @foreach ($articles as $article)
             <div class="col">
                 <div class="card h-100 border-0 shadow-sm">
                     @if(isset($article['multimedia'][0]['url']) && !empty($article['multimedia'][0]['url']))
                         @php
-                            $imageUrl = $article['multimedia'][0]['url'];  // Gunakan URL yang sudah lengkap
+                            $imageUrl = $article['multimedia'][0]['url'];
                         @endphp
                         <img src="{{ $imageUrl }}" class="card-img-top rounded-top" alt="Thumbnail" onerror="this.onerror=null;this.src='{{ asset('images/default_image.jpg') }}';">
                     @else
@@ -34,6 +40,15 @@
                                 {{ $article['section'] ?? 'Tidak diketahui' }} ·
                                 {{ \Carbon\Carbon::parse($article['published_date'])->diffForHumans() }}
                             </small>
+
+                            <form action="{{ url('/saved-articles') }}" method="POST" class="mt-2">
+                                @csrf
+                                <input type="hidden" name="title" value="{{ $article['title'] }}">
+                                <input type="hidden" name="url" value="{{ $article['url'] }}">
+                                <input type="hidden" name="summary" value="{{ $article['abstract'] }}">
+                                <input type="hidden" name="section" value="{{ $article['section'] ?? 'Unknown' }}">
+                                <button type="submit" class="btn btn-sm btn-outline-primary">Save</button>
+                            </form>
                         </div>
                     </div>
                 </div>
