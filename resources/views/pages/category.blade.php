@@ -38,6 +38,15 @@
                                     {{ $article['section'] ?? 'Tidak diketahui' }} ·
                                     {{ \Carbon\Carbon::parse($article['published_date'])->diffForHumans() }}
                                 </small>
+
+                                <form action="{{ url('/saved-articles') }}" method="POST" class="mt-2">
+                                    @csrf
+                                    <input type="hidden" name="title" value="{{ $article['title'] }}">
+                                    <input type="hidden" name="url" value="{{ $article['url'] }}">
+                                    <input type="hidden" name="summary" value="{{ $article['abstract'] }}">
+                                    <input type="hidden" name="section" value="{{ $article['section'] ?? 'Unknown' }}">
+                                    <button type="submit" class="btn btn-sm btn-outline-primary">Save</button>
+                                </form>
                             </div>
                         </div>
                     </div>

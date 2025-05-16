@@ -13,7 +13,13 @@ Route::get('/forgot-password', [AuthController::class, 'showForgotPasswordForm']
 Route::get('/', function () {
     return redirect()->route('home.index');
 });
+
+// Route /home tanpa middleware
 Route::get('/home', [PageController::class, 'index'])->name('home.index');
 Route::get('/home/{category}', [PageController::class, 'category'])->name('home.category');
-Route::get('/user/{username}', [HPageController::class, 'userProfile'])->name('user.profile');
-Route::get('/discussion', [PageController::class, 'discussion'])->name('discussion');
+
+// Route lainnya dibungkus middleware
+Route::middleware(['auth'])->group(function () {
+    Route::get('/user/{username}', [PageController::class, 'userProfile'])->name('user.profile');
+    Route::get('/discussion', [PageController::class, 'discussion'])->name('discussion');
+});
