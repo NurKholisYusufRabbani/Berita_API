@@ -19,7 +19,7 @@
 
     @include('partials.navbar')
 
-    <main class="container mx-auto px-4 py-8 flex-grow">
+    <main class="container mx-auto px-4 py-8 pt-20 flex-grow">
         @yield('content')
     </main>
 
@@ -30,4 +30,5 @@
     </footer>
 
 </body>
+
 </html>
