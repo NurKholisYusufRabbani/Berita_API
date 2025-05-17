@@ -15,7 +15,12 @@ class PageController extends Controller
 
         $articles = $response->json()['results'] ?? [];
 
+         
+
         return view('pages.index', compact('articles'));
+
+        
+
     }
 
     public function category($category)

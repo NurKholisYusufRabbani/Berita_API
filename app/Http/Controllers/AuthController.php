@@ -7,10 +7,24 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use Illuminate\Support\Facades\Log;
+
+
 
 class AuthController extends Controller
 {
-    // Register
+
+    public function showLoginForm()
+    {
+        return view('auth.login'); // Pastikan file resources/views/auth/login.blade.php ada
+    }
+
+    public function showRegisterForm()
+    {
+        return view('auth.register'); // Pastikan file resources/views/auth/register.blade.php ada
+    }
+
+     // Proses register
     public function register(Request $request)
     {
         $request->validate([
@@ -32,39 +46,28 @@ class AuthController extends Controller
         return response()->json([
             'token' => $token,
             'message' => 'User registered successfully'
-        ], 201);
+        ]);
     }
 
-    // Login
-    public function login(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-            'remember_me' => 'nullable|boolean',
-        ]);
 
+    // Login
+
+   public function login(Request $request)
+    {
         $credentials = $request->only('email', 'password');
 
         try {
-            if ($request->remember_me) {
-                // Set token TTL 30 days if remember_me true
-                JWTAuth::factory()->setTTL(60 * 24 * 30);
-            } else {
-                // Default 1 hour TTL
-                JWTAuth::factory()->setTTL(60);
-            }
-
             if (! $token = JWTAuth::attempt($credentials)) {
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
         } catch (JWTException $e) {
-            \Log::error('JWT Error: '.$e->getMessage());
             return response()->json(['error' => 'Could not create token'], 500);
         }
 
-        return response()->json(compact('token'));
+        return response()->json(['token' => $token]);
     }
+
+
 
     // Get Authenticated User
     public function me()

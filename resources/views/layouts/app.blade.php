@@ -1,38 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>@yield('title', 'Portal Berita Dunia')</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
     <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #f8f9fa;
-        }
-        footer {
-            background-color: #1a1a1a;
-            color: #ccc;
-            padding: 2rem 0;
-        }
-        footer a {
-            color: #ccc;
-            text-decoration: none;
-        }
-        footer a:hover {
-            text-decoration: underline;
-        }
+      /* Custom font fallback mirip 'Segoe UI' */
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
     </style>
 </head>
-<body>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
     @include('partials.navbar')
 
-    <main class="container py-4">
+    <main class="container mx-auto px-4 py-8 flex-grow">
         @yield('content')
     </main>
 
-    @include('partials.footer')
+    <footer class="bg-gray-900 text-gray-400 py-8 mt-8">
+        <div class="container mx-auto px-4 text-center">
+            @include('partials.footer')
+        </div>
+    </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
