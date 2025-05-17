@@ -11,10 +11,14 @@
                 class="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
                 <li><a href="{{ url('/') }}" class="block py-2 px-3 text-gray-900 dark:text-white md:p-0"
                         aria-current="page">Home</a></li>
-                <li><a href="{{ url('/home/health') }}" class="block py-2 px-3 text-gray-900 dark:text-white md:p-0">Health</a></li>
-                <li><a href="{{ url('/home/movies') }}" class="block py-2 px-3 text-gray-900 dark:text-white md:p-0">Movies</a></li>
-                <li><a href="{{ url('/home/food') }}" class="block py-2 px-3 text-gray-900 dark:text-white md:p-0">Food</a></li>
-                <li><a href="{{ url('/home/fashion') }}" class="block py-2 px-3 text-gray-900 dark:text-white md:p-0">Fashion</a>
+                <li><a href="{{ url('/home/health') }}"
+                        class="block py-2 px-3 text-gray-900 dark:text-white md:p-0">Health</a></li>
+                <li><a href="{{ url('/home/movies') }}"
+                        class="block py-2 px-3 text-gray-900 dark:text-white md:p-0">Movies</a></li>
+                <li><a href="{{ url('/home/food') }}"
+                        class="block py-2 px-3 text-gray-900 dark:text-white md:p-0">Food</a></li>
+                <li><a href="{{ url('/home/fashion') }}"
+                        class="block py-2 px-3 text-gray-900 dark:text-white md:p-0">Fashion</a>
                 </li>
             </ul>
         </div>
@@ -59,7 +63,8 @@
         const profileContainer = document.getElementById('userProfile');
 
         if (!token) {
-            profileContainer.innerHTML = `<a href="/login" class="text-blue-600 hover:underline">Login</a>`;
+            profileContainer.innerHTML = `<a href="/login" class="bg-white text-gray-800 px-3 py-1 rounded shadow hover:underline">Login</a>
+`;
             return;
         }
 
@@ -93,7 +98,8 @@
             profileContainer.appendChild(template.firstElementChild);
         } catch (err) {
             console.error(err);
-            profileContainer.innerHTML = `<a href="/login" class="text-blue-600 hover:underline">Login</a>`;
+            profileContainer.innerHTML = `<a href="/login" class="bg-white text-gray-800 px-3 py-1 rounded shadow hover:underline">Login</a>
+`;
         }
     }
 
