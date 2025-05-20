@@ -21,6 +21,7 @@
 
     <main class="container mx-auto px-4 py-8 pt-20 flex-grow">
         @yield('content')
+        @yield('scripts')
     </main>
 
     <footer class="bg-gray-900 text-gray-400 py-8 mt-8">

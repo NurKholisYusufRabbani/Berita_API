@@ -33,8 +33,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/discussion', [PageController::class, 'discussion'])->name('discussion');
 
     // ✅ Saved Articles
-    Route::get('saved-articles', [SavedArticleController::class, 'index']);     // List saved articles
-    Route::post('saved-articles', [SavedArticleController::class, 'store']);    // Save new article
+    Route::get('/saved-articles', [SavedArticleController::class, 'index']);     // List saved articles
+    //Route::post('saved-articles', [SavedArticleController::class, 'store']);    // Save new article
     Route::delete('saved-articles/{id}', [SavedArticleController::class, 'destroy']); // Delete saved article
 });
 

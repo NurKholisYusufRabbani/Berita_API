@@ -89,7 +89,7 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        Accept: 'application/json'
+                        'Accept': 'application/json',
                     },
                     body: JSON.stringify(data),
                 });
@@ -97,8 +97,9 @@
                 const result = await response.json();
 
                 if (response.ok) {
-                    localStorage.setItem('token', result.token);
-                    window.location.href = '/'; // Redirect ke home
+                    // Simpan token JWT yang benar
+                    localStorage.setItem('token', result.access_token);
+                    window.location.href = '/'; // Redirect ke home atau halaman lain
                 } else {
                     alert(result.error || 'Login gagal');
                 }
