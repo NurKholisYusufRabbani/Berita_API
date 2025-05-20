@@ -47,28 +47,85 @@
                                 {{ \Carbon\Carbon::parse($article['published_date'])->diffForHumans() }}
                             </small>
 
-                            <form action="{{ url('/saved-articles') }}" method="POST" class="self-start">
-                                @csrf
-                                <input type="hidden" name="title" value="{{ $article['title'] }}">
-                                <input type="hidden" name="url" value="{{ $article['url'] }}">
-                                <input type="hidden" name="summary" value="{{ $article['abstract'] }}">
-                                <input type="hidden" name="section" value="{{ $article['section'] ?? 'Unknown' }}">
-                                <button type="submit"
-                                    class="inline-flex items-center gap-2 text-blue-600 border border-blue-600 rounded-md px-4 py-2 text-sm font-medium hover:bg-blue-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 transition">
-                                    <!-- Icon bookmark -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M5 5v14l7-7 7 7V5a2 2 0 00-2-2H7a2 2 0 00-2 2z" />
-                                    </svg>
-                                    Save
-                                </button>
-
-                            </form>
+                            <!-- Tombol Save pake AJAX -->
+                            <button
+                                type="button"
+                                class="save-article-button inline-flex items-center gap-2 text-blue-600 border border-blue-600 rounded-md px-4 py-2 text-sm font-medium hover:bg-blue-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 transition"
+                                data-title="{{ $article['title'] }}"
+                                data-url="{{ $article['url'] }}"
+                                data-summary="{{ $article['abstract'] }}"
+                                data-section="{{ $article['section'] ?? 'Unknown' }}"
+                            >
+                                <!-- icon bookmark -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M5 5v14l7-7 7 7V5a2 2 0 00-2-2H7a2 2 0 00-2 2z" />
+                                </svg>
+                                Save
+                            </button>
                         </div>
                     </div>
                 </article>
             @endforeach
         </div>
     </div>
+@endsection
+
+@section('scripts')
+<script>
+document.querySelectorAll('.save-article-button').forEach(button => {
+    button.addEventListener('click', () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert('Please login first!');
+            window.location.href = '/login';
+            return;
+        }
+
+        const data = {
+            title: button.dataset.title,
+            url: button.dataset.url,
+            summary: button.dataset.summary,
+            section: button.dataset.section
+        };
+
+        console.log('Sending article:', data);
+
+        fetch('/api/saved-articles', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token,
+            },
+            body: JSON.stringify(data)
+        })
+        .then(async res => {
+            console.log('Response status:', res.status);
+            if (res.status === 401) {
+                alert('Unauthorized. Please login again.');
+                window.location.href = '/login';
+                return;
+            }
+            if (!res.ok) {
+                let errorMsg = 'Failed to save article';
+                try {
+                    const errorData = await res.json();
+                    if (errorData.message) errorMsg = errorData.message;
+                } catch(e) {}
+                throw new Error(errorMsg);
+            }
+            return res.json();
+        })
+        .then(json => {
+            console.log('Response JSON:', json);
+            alert(json.message || 'Article saved!');
+        })
+        .catch(err => {
+            console.error('Fetch error:', err);
+            alert(err.message || 'Failed to save article');
+        });
+    });
+});
+</script>
 @endsection

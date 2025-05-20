@@ -35,6 +35,7 @@
             <span class="sr-only">Open user menu</span>
             <img class="w-8 h-8 rounded-full" src="/docs/images/people/profile-picture-3.jpg" alt="User photo">
         </button>
+        
         <div class="absolute right-0 z-50 mt-2 w-48 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600 hidden"
             id="user-dropdown">
             <div class="px-4 py-3">

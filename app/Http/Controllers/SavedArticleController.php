@@ -15,20 +15,24 @@ class SavedArticleController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'title' => 'required',
+        $validated = $request->validate([
+            'title' => 'required|string',
             'url' => 'required|url',
+            'summary' => 'nullable|string',
+            'section' => 'nullable|string',
         ]);
 
-        SavedArticle::create([
-            'user_id' => Auth::id(),
-            'title' => $request->title,
-            'url' => $request->url,
-            'summary' => $request->summary,
-            'section' => $request->section,
-        ]);
+        $user = auth('api')->user();
 
-        return redirect()->back()->with('success', 'Artikel berhasil disimpan!');
+        $article = new SavedArticle();
+        $article->user_id = $user->id;
+        $article->title = $validated['title'];
+        $article->url = $validated['url'];
+        $article->summary = $validated['summary'] ?? null;
+        $article->section = $validated['section'] ?? null;
+        $article->save();
+
+        return response()->json(['message' => 'Article saved successfully']);
     }
 
     public function destroy($id)
