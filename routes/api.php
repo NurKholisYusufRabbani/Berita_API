@@ -8,6 +8,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ReplyController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\ResetPasswordController;
+use App\Http\Controllers\DiscussionController;
 
 // ✅ Public Endpoints
 Route::post('/register', [AuthController::class, 'register']);
@@ -30,17 +31,22 @@ Route::middleware('auth:api')->group(function () {
     // ✅ Saved Articles
     Route::get('saved-articles', [SavedArticleController::class, 'index']);     // List saved articles
     Route::post('saved-articles', [SavedArticleController::class, 'store']);    // Save new article
+    Route::get('saved-articles/token/{token}', [SavedArticleController::class, 'findByToken']);
     Route::delete('saved-articles/{id}', [SavedArticleController::class, 'destroy']); // Delete saved article
+    
+    // ✅ DISCUSSIONS
+    Route::get('discussions/{token}', [DiscussionController::class, 'index']);
+    Route::post('discussions/{token}', [DiscussionController::class, 'store']);
 
-    // ✅ Comments (on Saved Articles)
-    Route::get('saved-articles/{article}/comments', [CommentController::class, 'index']);   // View comments on an article
-    Route::post('saved-articles/{article}/comments', [CommentController::class, 'store']);  // Post a comment
-    Route::delete('comments/{id}', [CommentController::class, 'destroy']);                 // Delete a comment
+    // ✅ COMMENTS (on a discussion of a given article_token)
+    Route::get('articles/{token}/comments', [CommentController::class, 'index']);
+    Route::post('articles/{token}/comments', [CommentController::class, 'store']);
+    Route::delete('comments/{id}', [CommentController::class, 'destroy']);
 
-    // ✅ Replies (on Comments)
-    Route::get('comments/{comment}/replies', [ReplyController::class, 'index']);   // View replies to a comment
-    Route::post('comments/{comment}/replies', [ReplyController::class, 'store']);  // Reply to a comment
-    Route::delete('replies/{id}', [ReplyController::class, 'destroy']);           // Delete a reply
+    // ✅ REPLIES (on a comment)
+    Route::get('comments/{comment}/replies', [ReplyController::class, 'index']);
+    Route::post('comments/{comment}/replies', [ReplyController::class, 'store']);
+    Route::delete('replies/{id}', [ReplyController::class, 'destroy']);
 });
 
 // ✅ Admin-only route (hanya bisa diakses oleh role:admin)
