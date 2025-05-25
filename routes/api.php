@@ -47,6 +47,9 @@ Route::middleware('auth:api')->group(function () {
     Route::get('comments/{comment}/replies', [ReplyController::class, 'index']);
     Route::post('comments/{comment}/replies', [ReplyController::class, 'store']);
     Route::delete('replies/{id}', [ReplyController::class, 'destroy']);
+
+    Route::get('auth/google', [AuthController::class, 'redirectToGoogle']);
+    Route::get('auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 });
 
 // ✅ Admin-only route (hanya bisa diakses oleh role:admin)

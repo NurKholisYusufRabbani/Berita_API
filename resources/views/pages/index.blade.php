@@ -74,6 +74,17 @@
 
 @section('scripts')
 <script>
+    (function(){
+        const urlParams = new URLSearchParams(window.location.search);
+        const oauthToken = urlParams.get('token');
+        if (oauthToken) {
+            localStorage.setItem('token', oauthToken);
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    })();
+</script>
+
+<script>
 document.querySelectorAll('.save-article-button').forEach(button => {
     button.addEventListener('click', () => {
         const token = localStorage.getItem('token');

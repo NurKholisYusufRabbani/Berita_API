@@ -110,5 +110,13 @@
         window.location.href = '/login';
     }
 
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    if (token) {
+        localStorage.setItem('token', token);
+        // Bersihkan URL biar token gak keliatan di address bar
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
     checkAuthAndRenderProfile();
 </script>

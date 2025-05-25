@@ -25,6 +25,7 @@
 </div>
 
 <script>
+    (() => {
     const token = localStorage.getItem('token'); // ambil token user login
     const articleToken = "{{ $token }}";         // token artikel dari controller/URL
 
@@ -306,5 +307,6 @@
 
     // Muat komentar saat halaman dibuka
     loadComments();
+    })();
 </script>
 @endsection
