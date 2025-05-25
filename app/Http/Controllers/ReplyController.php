@@ -8,15 +8,20 @@ use Illuminate\Support\Facades\Auth;
 
 class ReplyController extends Controller
 {
-    public function store(Request $request)
+    public function index($commentId)
+    {
+        $replies = Reply::with('user')->where('comment_id', $commentId)->get();
+        return response()->json($replies);
+    }
+
+    public function store(Request $request, $commentId)
     {
         $request->validate([
-            'comment_id' => 'required|exists:comments,id',
             'content' => 'required',
         ]);
 
         return Reply::create([
-            'comment_id' => $request->comment_id,
+            'comment_id' => $commentId,
             'user_id' => Auth::id(),
             'content' => $request->content,
         ]);

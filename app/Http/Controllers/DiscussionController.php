@@ -7,16 +7,10 @@ use Illuminate\Http\Request;
 
 class DiscussionController extends Controller
 {
-    public function index()
+    public function index($token)
     {
-        $user = auth()->user();
-
-        $savedArticles = $user->savedArticles()->latest()->get();
-
-        // Contoh ambil discussions yang relevan (atau semua)
-        $discussions = Discussion::with(['user', 'comments.user', 'comments.replies.user'])->latest()->get();
-
-        return view('saved-articles', compact('savedArticles', 'discussions'));
+        $discussions = Discussion::where('article_token', $token)->with('user')->get();
+        return response()->json($discussions);
     }
 
     public function show($id)
@@ -24,15 +18,18 @@ class DiscussionController extends Controller
         return Discussion::with('comments.replies')->findOrFail($id);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, $token)
     {
-        $request->validate([
-            'saved_article_id' => 'required|exists:saved_articles,id',
+        $validated = $request->validate([
+            'content' => 'required|string',
         ]);
 
-        return Discussion::create([
-            'saved_article_id' => $request->saved_article_id,
-            'title' => $request->title,
-        ]);
+        $discussion = new Discussion();
+        $discussion->user_id = auth('api')->id();
+        $discussion->article_token = $token;
+        $discussion->content = $validated['content'];
+        $discussion->save();
+
+        return response()->json(['message' => 'Comment posted']);
     }
 }

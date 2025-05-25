@@ -9,7 +9,7 @@ class Discussion extends Model
 {
     use HasFactory;
     
-    protected $fillable = ['saved_article_id', 'title'];
+    protected $fillable = ['article_token', 'title'];
 
     public function savedArticle() {
         return $this->belongsTo(SavedArticle::class);
