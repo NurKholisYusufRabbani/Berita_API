@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -96,5 +97,40 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to logout'], 500);
         }
+    }
+
+    // Redirect ke Google login
+    public function redirectToGoogle()
+    {
+        return Socialite::driver('google')->stateless()->redirect();
+    }
+
+    // Callback dari Google
+    public function handleGoogleCallback()
+    {
+        try {
+            $googleUser = Socialite::driver('google')->stateless()->user();
+        } catch (\Exception $e) {
+            return redirect('/login')->with('error', 'Gagal login dengan Google');
+        }
+
+        // Cari user berdasarkan email
+        $user = \App\Models\User::where('email', $googleUser->getEmail())->first();
+
+        // Kalau belum ada, buat user baru
+        if (!$user) {
+            $user = \App\Models\User::create([
+                'name' => $googleUser->getName(),
+                'email' => $googleUser->getEmail(),
+                'password' => bcrypt(Str::random(24)), // password random karena gak dipakai
+                'email_verified_at' => now(),
+            ]);
+        }
+
+        // Generate JWT token
+        $token = JWTAuth::fromUser($user);
+        
+        // Redirect ke /home dengan token di URL
+        return redirect('/home?token=' . $token);
     }
 }

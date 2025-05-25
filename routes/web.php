@@ -5,6 +5,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\SavedArticleController;
+use Firebase\JWT\JWT;
+use App\Models\User;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 // Auth Form Routes (halaman tampilan)
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -52,3 +57,6 @@ Route::get('/discussions/{token}', function ($token) {
 Route::middleware('auth:api')->get('/me', function (Request $request) {
     return response()->json($request->user());
 });
+
+Route::get('/auth/google', [AuthController::class, 'redirectToGoogle']);
+Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);

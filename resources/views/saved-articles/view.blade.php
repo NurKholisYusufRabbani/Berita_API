@@ -12,9 +12,9 @@
 </div>
 
 <script>
+(() => {
     const token = localStorage.getItem('token');
     if (!token) {
-        // Kalau akses langsung ke view tanpa token, balikin ke halaman awal
         window.location.href = "/saved-articles";
     }
 
@@ -64,5 +64,6 @@
             </div>
         `;
     });
+})();
 </script>
 @endsection
