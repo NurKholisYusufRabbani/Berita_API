@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -114,7 +115,12 @@ class UserController extends Controller
         ], 200);
     }
 
-    // Update profil user sendiri
+    public function viewProfile()
+    {
+        $user = auth()->user();
+        return view('profile', compact('user'));
+    }
+
     public function updateProfile(Request $request)
     {
         $user = auth()->user();
@@ -123,10 +129,21 @@ class UserController extends Controller
             'name' => 'sometimes|string',
             'email' => 'sometimes|email|unique:users,email,' . $user->id,
             'password' => 'sometimes|string|min:6|confirmed',
+            'photo_profile' => 'sometimes|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         if (isset($validated['password'])) {
             $validated['password'] = bcrypt($validated['password']);
+        }
+
+        // Handle foto profil
+        if ($request->hasFile('photo_profile')) {
+            if ($user->photo_profile && Storage::disk('public')->exists($user->photo_profile)) {
+                Storage::disk('public')->delete($user->photo_profile);
+            }
+
+            $path = $request->file('photo_profile')->store('profile_photos', 'public');
+            $validated['photo_profile'] = $path;
         }
 
         $user->update($validated);
@@ -134,7 +151,7 @@ class UserController extends Controller
         return response()->json([
             'message' => 'Profile updated successfully',
             'data' => $user,
-        ], 200);
+        ]);
     }
 
     // Hapus akun user sendiri

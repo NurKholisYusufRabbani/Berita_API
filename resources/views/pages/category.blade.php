@@ -21,6 +21,8 @@
             @foreach ($articles as $article)
                 @php
                     $imageUrl = $article['multimedia'][0]['url'] ?? asset('images/default_image.jpg');
+                    $shareUrl = urlencode($article['url']);
+                    $shareTitle = urlencode($article['title']);
                 @endphp
 
                 <article
@@ -42,28 +44,38 @@
                         </p>
 
                         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                            <small class="text-gray-400 text-sm sm:text-base">
+                        <small class="text-gray-400 text-sm sm:text-base">
                                 {{ $article['section'] ?? 'Unknown' }} &middot;
                                 {{ \Carbon\Carbon::parse($article['published_date'])->diffForHumans() }}
                             </small>
 
-                            <!-- Tombol Save pake AJAX -->
-                            <button
-                                type="button"
-                                class="save-article-button inline-flex items-center gap-2 text-blue-600 border border-blue-600 rounded-md px-4 py-2 text-sm font-medium hover:bg-blue-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 transition"
-                                data-title="{{ $article['title'] }}"
-                                data-url="{{ $article['url'] }}"
-                                data-summary="{{ $article['abstract'] }}"
-                                data-section="{{ $article['section'] ?? 'Unknown' }}"
-                            >
-                                <!-- icon bookmark -->
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M5 5v14l7-7 7 7V5a2 2 0 00-2-2H7a2 2 0 00-2 2z" />
-                                </svg>
-                                Save
-                            </button>
+                            <div class="flex gap-2">
+                                <!-- Tombol Share ke WhatsApp -->
+                                <a href="#" 
+                                    class="share-whatsapp inline-flex items-center gap-1 text-green-600 border border-green-600 rounded-md px-3 py-1 text-sm font-medium hover:bg-green-600 hover:text-white transition"
+                                    data-title="{{ $article['title'] }}"
+                                    data-url="{{ $article['url'] }}"
+                                >
+                                    <i class="fab fa-whatsapp"></i> WhatsApp
+                                </a>
+
+                                <!-- Tombol Save pake AJAX -->
+                                <button
+                                    type="button"
+                                    class="save-article-button inline-flex items-center gap-2 text-blue-600 border border-blue-600 rounded-md px-4 py-2 text-sm font-medium hover:bg-blue-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 transition"
+                                    data-title="{{ $article['title'] }}"
+                                    data-url="{{ $article['url'] }}"
+                                    data-summary="{{ $article['abstract'] }}"
+                                    data-section="{{ $article['section'] ?? 'Unknown' }}"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M5 5v14l7-7 7 7V5a2 2 0 00-2-2H7a2 2 0 00-2 2z" />
+                                    </svg>
+                                    Save
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </article>
@@ -73,6 +85,19 @@
 @endsection
 
 @section('scripts')
+<!-- Simpan token dari URL ke localStorage -->
+<script>
+    (function(){
+        const urlParams = new URLSearchParams(window.location.search);
+        const oauthToken = urlParams.get('token');
+        if (oauthToken) {
+            localStorage.setItem('token', oauthToken);
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    })();
+</script>
+
+<!-- Handle tombol Save -->
 <script>
 document.querySelectorAll('.save-article-button').forEach(button => {
     button.addEventListener('click', () => {
@@ -90,8 +115,6 @@ document.querySelectorAll('.save-article-button').forEach(button => {
             section: button.dataset.section
         };
 
-        console.log('Sending article:', data);
-
         fetch('/api/saved-articles', {
             method: 'POST',
             headers: {
@@ -101,7 +124,6 @@ document.querySelectorAll('.save-article-button').forEach(button => {
             body: JSON.stringify(data)
         })
         .then(async res => {
-            console.log('Response status:', res.status);
             if (res.status === 401) {
                 alert('Unauthorized. Please login again.');
                 window.location.href = '/login';
@@ -118,13 +140,25 @@ document.querySelectorAll('.save-article-button').forEach(button => {
             return res.json();
         })
         .then(json => {
-            console.log('Response JSON:', json);
             alert(json.message || 'Article saved!');
         })
         .catch(err => {
             console.error('Fetch error:', err);
             alert(err.message || 'Failed to save article');
         });
+    });
+});
+
+// Script Share ke WhatsApp per artikel
+document.querySelectorAll('.share-whatsapp').forEach(link => {
+    link.addEventListener('click', function(event) {
+        event.preventDefault();
+        const title = this.dataset.title || '';
+        const url = this.dataset.url || '';
+        console.log('Sharing:', title, url); 
+        const message = encodeURIComponent(`${title} ${url}`);
+        const waUrl = `https://wa.me/?text=${message}`;
+        window.open(waUrl, '_blank');
     });
 });
 </script>

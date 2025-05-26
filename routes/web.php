@@ -60,3 +60,6 @@ Route::middleware('auth:api')->get('/me', function (Request $request) {
 
 Route::get('/auth/google', [AuthController::class, 'redirectToGoogle']);
 Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
+
+Route::get('/profile', [UserController::class, 'viewProfile'])->name('profile.view');
+Route::post('/profile/update', [UserController::class, 'updateProfile'])->name('profile.update');
