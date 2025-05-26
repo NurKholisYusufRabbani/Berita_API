@@ -18,7 +18,6 @@ class PageController extends Controller
          
 
         return view('pages.index', compact('articles'));
-
         
 
     }
