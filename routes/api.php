@@ -9,6 +9,7 @@ use App\Http\Controllers\ReplyController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\DiscussionController;
+use App\Http\Controllers\ProfileController;
 
 // ✅ Public Endpoints
 Route::post('/register', [AuthController::class, 'register']);
@@ -22,11 +23,6 @@ Route::middleware('auth:api')->group(function () {
     // Auth
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
-
-    // ✅ User Profile
-    Route::get('/user/profile', [UserController::class, 'profile']);
-    Route::put('/user/profile', [UserController::class, 'updateProfile']);
-    Route::delete('/user/profile', [UserController::class, 'destroyProfile']);
 
     // ✅ Saved Articles
     Route::get('saved-articles', [SavedArticleController::class, 'index']);     // List saved articles
@@ -59,4 +55,10 @@ Route::middleware(['auth:api', 'role:admin'])->group(function () {
     Route::get('/admin/users/{user}', [UserController::class, 'show']);
     Route::put('/admin/users/{user}', [UserController::class, 'update']);
     Route::delete('/admin/users/{id}', [UserController::class, 'destroy']);
+});
+
+Route::middleware('auth:api')->group(function () {
+    Route::get('/me', [ProfileController::class, 'me']);
+    Route::post('/profile/photo', [ProfileController::class, 'updatePhoto']);
+    Route::delete('/profile/photo', [ProfileController::class, 'deletePhoto']);
 });

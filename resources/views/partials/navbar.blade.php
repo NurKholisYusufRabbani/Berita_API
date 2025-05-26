@@ -25,32 +25,40 @@
     </div>
 </nav>
 
-
 <!-- Template dropdown menu -->
 <div id="userDropdownTemplate" class="hidden">
     <div class="relative">
         <button type="button"
             class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
-            id="user-menu-button" aria-expanded="false">
+            id="user-menu-button" aria-expanded="false" aria-haspopup="true">
             <span class="sr-only">Open user menu</span>
             <img class="w-8 h-8 rounded-full" src="/docs/images/people/profile-picture-3.jpg" alt="User photo">
         </button>
-        
+
         <div class="absolute right-0 z-50 mt-2 w-48 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600 hidden"
-            id="user-dropdown">
+            id="user-dropdown" role="menu" aria-labelledby="user-menu-button">
             <div class="px-4 py-3">
                 <span id="dropdown-name" class="block text-sm text-gray-900 dark:text-white">User Name</span>
                 <span id="dropdown-email"
                     class="block text-sm text-gray-500 truncate dark:text-gray-400">email@example.com</span>
             </div>
             <ul class="py-2" aria-labelledby="user-menu-button">
-                <li><a href="/profile"
-                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white">Profile</a>
+                <li><a href="/dashboard"
+                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white">Dashboard</a>
                 </li>
-                <li><a href="/saved-articles" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white">Saved Articles</a></li>
+                <li><a href="/saved-articles"
+                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white">Saved
+                        Articles</a></li>
                 <li><a href="/settings"
                         class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white">Settings</a>
                 </li>
+                <li>
+                    <a href="/profile"
+                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white">
+                        Profile
+                    </a>
+                </li>
+
                 <li><a href="#" onclick="logout()"
                         class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:text-red-400 dark:hover:bg-gray-600 dark:hover:text-white">Sign
                         out</a></li>
@@ -65,8 +73,7 @@
         const profileContainer = document.getElementById('userProfile');
 
         if (!token) {
-            profileContainer.innerHTML = `<a href="/login" class="bg-white text-gray-800 px-3 py-1 rounded shadow hover:underline">Login</a>
-`;
+            profileContainer.innerHTML = `<a href="/login" class="bg-white text-gray-800 px-3 py-1 rounded shadow hover:underline">Login</a>`;
             return;
         }
 
@@ -89,6 +96,10 @@
             template.querySelector('#dropdown-name').textContent = user.name;
             template.querySelector('#dropdown-email').textContent = user.email;
 
+            // Set profile photo with fallback (avatar inisial jika tidak ada foto)
+            const photoUrl = user.profile_photo_url || (user.profile_photo ? `/storage/${user.profile_photo}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}`);
+            template.querySelector('#user-menu-button img').src = photoUrl;
+
             const dropdownBtn = template.querySelector('#user-menu-button');
             const dropdownMenu = template.querySelector('#user-dropdown');
 
@@ -100,8 +111,7 @@
             profileContainer.appendChild(template.firstElementChild);
         } catch (err) {
             console.error(err);
-            profileContainer.innerHTML = `<a href="/login" class="bg-white text-gray-800 px-3 py-1 rounded shadow hover:underline">Login</a>
-`;
+            profileContainer.innerHTML = `<a href="/login" class="bg-white text-gray-800 px-3 py-1 rounded shadow hover:underline">Login</a>`;
         }
     }
 
@@ -110,11 +120,11 @@
         window.location.href = '/login';
     }
 
+    // Bila token diterima dari URL parameter, simpan ke localStorage dan bersihkan URL
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
     if (token) {
         localStorage.setItem('token', token);
-        // Bersihkan URL biar token gak keliatan di address bar
         window.history.replaceState({}, document.title, window.location.pathname);
     }
 

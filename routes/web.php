@@ -10,6 +10,8 @@ use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Http\Controllers\ProfileController;
+
 
 // Auth Form Routes (halaman tampilan)
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -61,5 +63,7 @@ Route::middleware('auth:api')->get('/me', function (Request $request) {
 Route::get('/auth/google', [AuthController::class, 'redirectToGoogle']);
 Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 
-Route::get('/profile', [UserController::class, 'viewProfile'])->name('profile.view');
-Route::post('/profile/update', [UserController::class, 'updateProfile'])->name('profile.update');
+
+Route::get('/profile', function () {
+    return view('auth.profile');
+});
