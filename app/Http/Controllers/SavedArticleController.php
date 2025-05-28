@@ -10,9 +10,8 @@ class SavedArticleController extends Controller
 {
     public function index()
     {
-        $user = auth('api')->user(); // Gunakan guard api explicit
-        // ambil saved articles user tersebut
-        $articles = $user->savedArticles; 
+        $user = auth()->user();
+        $articles = $user->savedArticles;
         return response()->json($articles);
     }
 

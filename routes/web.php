@@ -1,16 +1,18 @@
 <?php
 
+use App\Models\User;
+use Firebase\JWT\JWT;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PageController;
-use App\Http\Controllers\SavedArticleController;
-use Firebase\JWT\JWT;
-use App\Models\User;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Auth;
-use Tymon\JWTAuth\Facades\JWTAuth;
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AdminAuthController;
+use App\Http\Controllers\AdminUserController;
+use App\Http\Controllers\AdminDiscussionController;
+use App\Http\Controllers\AdminSavedArticleController;
 
 
 // Auth Form Routes (halaman tampilan)
@@ -45,6 +47,14 @@ Route::get('/discussions/{token}', function ($token) {
     return view('discussions.show', ['token' => $token]);
 });
 
+Route::get('/about', function () {
+    return view('pages.about');
+})->name('about');
+
+Route::get('/contact', function () {
+    return view('pages.contact');
+})->name('contact');
+
 // Route lainnya dibungkus middleware
 //Route::middleware(['auth'])->group(function () {
     //Route::get('/user/{username}', [PageController::class, 'userProfile'])->name('user.profile');
@@ -56,6 +66,9 @@ Route::get('/discussions/{token}', function ($token) {
     //Route::delete('saved-articles/{id}', [SavedArticleController::class, 'destroy']); // Delete saved article
 //});
 
+
+
+
 Route::middleware('auth:api')->get('/me', function (Request $request) {
     return response()->json($request->user());
 });
@@ -63,6 +76,53 @@ Route::middleware('auth:api')->get('/me', function (Request $request) {
 Route::get('/auth/google', [AuthController::class, 'redirectToGoogle']);
 Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 
+
+
+
+Route::prefix('admin')->group(function () {
+    Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
+    Route::post('/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
+
+    Route::middleware(['auth', 'is_admin'])->group(function () {
+        Route::get('/dashboard', [AdminAuthController::class, 'dashboard'])->name('admin.dashboard');
+        Route::post('/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
+    });
+});
+
+
+Route::middleware(['auth', 'is_admin'])->prefix('admin')->group(function () {
+    Route::resource('users', AdminUserController::class)->names([
+        'index' => 'admin.users.index',
+        'create' => 'admin.users.create',
+        'store' => 'admin.users.store',
+        'edit' => 'admin.users.edit',
+        'update' => 'admin.users.update',
+        'destroy' => 'admin.users.destroy',
+    ]);
+});
+
+Route::middleware(['auth', 'is_admin'])->prefix('admin')->group(function () {
+    Route::get('saved-articles/user/{id}', [AdminSavedArticleController::class, 'userArticles'])->name('admin.saved_articles.user');
+    Route::get('saved-articles', [AdminSavedArticleController::class, 'index'])->name('admin.saved_articles.index');
+    Route::get('saved-articles/{id}', [AdminSavedArticleController::class, 'show'])->name('admin.saved_articles.show');
+    Route::delete('saved-articles/{id}', [AdminSavedArticleController::class, 'destroy'])->name('admin.saved_articles.destroy');
+});
+
+
+
+
+Route::middleware(['auth', 'is_admin'])->prefix('admin')->group(function () {
+    Route::get('/discussions', [AdminDiscussionController::class, 'index'])->name('admin.discussions.index');
+    Route::get('/discussions/{id}', [AdminDiscussionController::class, 'show'])->name('admin.discussions.show');
+
+    Route::delete('/comments/{id}', [AdminDiscussionController::class, 'deleteComment'])->name('admin.comments.delete');
+    Route::delete('/replies/{id}', [AdminDiscussionController::class, 'deleteReply'])->name('admin.replies.delete');
+});
+
+
+Route::get('/settings', function () {
+    return view('settings.index');  // pastikan file resources/views/settings/index.blade.php ada
+});
 
 Route::get('/profile', function () {
     return view('auth.profile');
