@@ -11,9 +11,10 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AdminUserController;
+use App\Http\Controllers\ResetPasswordController;
+use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\AdminDiscussionController;
 use App\Http\Controllers\AdminSavedArticleController;
-
 
 // Auth Form Routes (halaman tampilan)
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -66,18 +67,12 @@ Route::get('/contact', function () {
     //Route::delete('saved-articles/{id}', [SavedArticleController::class, 'destroy']); // Delete saved article
 //});
 
-
-
-
 Route::middleware('auth:api')->get('/me', function (Request $request) {
     return response()->json($request->user());
 });
 
 Route::get('/auth/google', [AuthController::class, 'redirectToGoogle']);
 Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
-
-
-
 
 Route::prefix('admin')->group(function () {
     Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
@@ -88,7 +83,6 @@ Route::prefix('admin')->group(function () {
         Route::post('/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
     });
 });
-
 
 Route::middleware(['auth', 'is_admin'])->prefix('admin')->group(function () {
     Route::resource('users', AdminUserController::class)->names([
@@ -108,9 +102,6 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->group(function () {
     Route::delete('saved-articles/{id}', [AdminSavedArticleController::class, 'destroy'])->name('admin.saved_articles.destroy');
 });
 
-
-
-
 Route::middleware(['auth', 'is_admin'])->prefix('admin')->group(function () {
     Route::get('/discussions', [AdminDiscussionController::class, 'index'])->name('admin.discussions.index');
     Route::get('/discussions/{id}', [AdminDiscussionController::class, 'show'])->name('admin.discussions.show');
@@ -119,11 +110,40 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->group(function () {
     Route::delete('/replies/{id}', [AdminDiscussionController::class, 'deleteReply'])->name('admin.replies.delete');
 });
 
-
 Route::get('/settings', function () {
-    return view('settings.index');  // pastikan file resources/views/settings/index.blade.php ada
+    return view('settings.index');
 });
 
 Route::get('/profile', function () {
     return view('auth.profile');
 });
+
+// Rute untuk menampilkan form permintaan reset password
+Route::get('forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])
+    ->middleware('guest') // Hanya bisa diakses oleh tamu (belum login)
+    ->name('password.request');
+
+// Rute untuk mengirim link reset password
+Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])
+    ->middleware('guest')
+    ->name('password.email');
+
+// Rute untuk menampilkan form permintaan reset password
+Route::get('forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])
+    ->middleware('guest')
+    ->name('password.request');
+
+// Rute untuk mengirim link reset password
+Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])
+    ->middleware('guest')
+    ->name('password.email');
+
+// Rute untuk menampilkan form reset password (setelah user klik link di email)
+Route::get('reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])
+    ->middleware('guest')
+    ->name('password.reset'); // Nama route ini akan digunakan di link dalam email
+
+// Rute untuk memproses reset password
+Route::post('reset-password', [ResetPasswordController::class, 'reset'])
+    ->middleware('guest')
+    ->name('password.update');

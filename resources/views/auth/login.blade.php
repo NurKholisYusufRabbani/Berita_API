@@ -35,8 +35,9 @@
                             <label for="remember-me" class="ml-3 block text-sm text-slate-800">Remember me</label>
                         </div>
                         <div class="text-sm">
-                            <a href="javascript:void(0);" class="text-gray-900 hover:underline font-semibold">Forgot your
-                                password?</a>
+                            <a href="{{ route('password.request') }}">
+                                {{ __('Forgot Your Password?') }}
+                            </a>
                         </div>
                     </div>
 
