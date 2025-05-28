@@ -20,7 +20,7 @@ use App\Http\Controllers\AdminSavedArticleController;
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']); // Proses submit form login
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
-Route::post('/register', [AuthController::class, 'register']); // Jika ingin pakai form register di web
+Route::post('/register', [AuthController::class, 'register']);
 Route::middleware('auth')->get('/home', function () {
     return view('home');
 });
