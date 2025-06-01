@@ -3,13 +3,14 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\SavedArticleController;
-use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ReplyController;
-use App\Http\Controllers\ForgotPasswordController;
-use App\Http\Controllers\ResetPasswordController;
-use App\Http\Controllers\DiscussionController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\DiscussionController;
+use App\Http\Controllers\SavedArticleController;
+use App\Http\Controllers\ResetPasswordController;
+use App\Http\Controllers\ForgotPasswordController;
 
 // ✅ Public Endpoints
 Route::post('/register', [AuthController::class, 'register']);
@@ -61,4 +62,9 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/me', [ProfileController::class, 'me']);
     Route::post('/profile/photo', [ProfileController::class, 'updatePhoto']);
     Route::delete('/profile/photo', [ProfileController::class, 'deletePhoto']);
+});
+
+Route::middleware(['auth:api'])->group(function () {
+    Route::get('/me', [SettingsController::class, 'me']);
+    Route::put('/settings', [SettingsController::class, 'update']);
 });

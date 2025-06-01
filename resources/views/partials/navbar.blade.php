@@ -7,21 +7,49 @@
             <!-- Isi dinamis lewat JS -->
         </div>
         <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-user">
-            <ul
-                class="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-                <li><a href="{{ url('/') }}" class="block py-2 px-3 text-gray-900 dark:text-white md:p-0"
-                        aria-current="page">Home</a></li>
-                <li><a href="{{ url('/home/health') }}"
-                        class="block py-2 px-3 text-gray-900 dark:text-white md:p-0">Health</a></li>
-                <li><a href="{{ url('/home/movies') }}"
-                        class="block py-2 px-3 text-gray-900 dark:text-white md:p-0">Movies</a></li>
-                <li><a href="{{ url('/home/food') }}"
-                        class="block py-2 px-3 text-gray-900 dark:text-white md:p-0">Food</a></li>
-                <li><a href="{{ url('/home/fashion') }}"
-                        class="block py-2 px-3 text-gray-900 dark:text-white md:p-0">Fashion</a>
-                </li>
-            </ul>
-        </div>
+    <ul
+        class="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 
+        md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 
+        md:dark:bg-gray-900 dark:border-gray-700">
+
+        <li>
+            <a href="{{ url('/') }}"
+                class="block py-2 px-3 md:p-0 transition-colors duration-200 
+                {{ Request::is('/') ? 'text-blue-500 font-semibold' : 'text-gray-900 dark:text-white hover:text-blue-500' }}"
+                aria-current="page">Home</a>
+        </li>
+
+        <li>
+            <a href="{{ url('/home/health') }}"
+                class="block py-2 px-3 md:p-0 transition-colors duration-200 
+                {{ Request::is('home/health') ? 'text-blue-500 font-semibold' : 'text-gray-900 dark:text-white hover:text-blue-500' }}">
+                Health</a>
+        </li>
+
+        <li>
+            <a href="{{ url('/home/movies') }}"
+                class="block py-2 px-3 md:p-0 transition-colors duration-200 
+                {{ Request::is('home/movies') ? 'text-blue-500 font-semibold' : 'text-gray-900 dark:text-white hover:text-blue-500' }}">
+                Movies</a>
+        </li>
+
+        <li>
+            <a href="{{ url('/home/food') }}"
+                class="block py-2 px-3 md:p-0 transition-colors duration-200 
+                {{ Request::is('home/food') ? 'text-blue-500 font-semibold' : 'text-gray-900 dark:text-white hover:text-blue-500' }}">
+                Food</a>
+        </li>
+
+        <li>
+            <a href="{{ url('/home/fashion') }}"
+                class="block py-2 px-3 md:p-0 transition-colors duration-200 
+                {{ Request::is('home/fashion') ? 'text-blue-500 font-semibold' : 'text-gray-900 dark:text-white hover:text-blue-500' }}">
+                Fashion</a>
+        </li>
+
+    </ul>
+</div>
+
     </div>
 </nav>
 
@@ -32,7 +60,7 @@
             class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
             id="user-menu-button" aria-expanded="false" aria-haspopup="true">
             <span class="sr-only">Open user menu</span>
-            <img class="w-8 h-8 rounded-full" src="/docs/images/people/profile-picture-3.jpg" alt="User photo">
+            <img class="w-8 h-8 rounded-full object-cover" src="/docs/images/people/profile-picture-3.jpg" alt="User photo">
         </button>
 
         <div class="absolute right-0 z-50 mt-2 w-48 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600 hidden"
@@ -43,20 +71,17 @@
                     class="block text-sm text-gray-500 truncate dark:text-gray-400">email@example.com</span>
             </div>
             <ul class="py-2" aria-labelledby="user-menu-button">
-                <li><a href="/dashboard"
-                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white">Dashboard</a>
+                <li>
+                    <a href="/profile"
+                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white">
+                        Profile
+                    </a>
                 </li>
                 <li><a href="/saved-articles"
                         class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white">Saved
                         Articles</a></li>
                 <li><a href="/settings"
                         class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white">Settings</a>
-                </li>
-                <li>
-                    <a href="/profile"
-                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white">
-                        Profile
-                    </a>
                 </li>
 
                 <li><a href="#" onclick="logout()"

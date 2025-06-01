@@ -16,6 +16,6 @@ class SavedArticle extends Model
     }
 
     public function discussion() {
-        return $this->hasOne(Discussion::class);
+        return $this->hasMany(Discussion::class);
     }
 }
